@@ -158,5 +158,4 @@
         }
         ```
 
-> Use tools like Postman or curl to test these endpoints.
 
