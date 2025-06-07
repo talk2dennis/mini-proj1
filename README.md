@@ -25,17 +25,15 @@
 5. The server will start at `http://localhost:5000`. Use the endpoints below to interact with the API.
 
 ## Endpoints
-
-### Create User
-- **POST** `/users`
-    - **Description:** Create a new user.
-    - **Request Body:** JSON object with user details. All fields are required.
+### Create Item
+- **POST** `/items`
+    - **Description:** Create a new item.
+    - **Request Body:** JSON object with `name` and `description`. Both fields are required.
     - **Example Request:**
       ```json
       {
-        "firstName": "John",
-        "lastName": "Doe",
-        "email": "example@mail.com"
+        "name": "Sample Item",
+        "description": "This is a sample item."
       }
       ```
     - **Success Response:**
@@ -44,12 +42,11 @@
         ```json
         {
           "id": "1",
-          "firstName": "John",
-          "lastName": "Doe",
-          "email": "example@mail.com"
+          "name": "Sample Item",
+          "description": "This is a sample item."
         }
         ```
-    - **Error Responses:**
+    - **Error Response:**
       - **Status:** `400 Bad Request`
       - **Body:**
         ```json
@@ -57,17 +54,10 @@
           "error": "Missing required fields"
         }
         ```
-      - **Status:** `409 Conflict`
-      - **Body:**
-        ```json
-        {
-          "error": "Email already exists"
-        }
-        ```
 
-### Get All Users
-- **GET** `/users`
-    - **Description:** Retrieve a list of all users.
+### Get All Items
+- **GET** `/items`
+    - **Description:** Retrieve a list of all items.
     - **Success Response:**
       - **Status:** `200 OK`
       - **Body:**
@@ -75,25 +65,23 @@
         [
           {
             "id": "1",
-            "firstName": "John",
-            "lastName": "Doe",
-            "email": "example@mail.com"
+            "name": "Sample Item",
+            "description": "This is a sample item."
           }
         ]
         ```
 
-### Get User by ID
-- **GET** `/users/:id`
-    - **Description:** Retrieve a single user by their ID.
+### Get Item by ID
+- **GET** `/items/:id`
+    - **Description:** Retrieve a single item by its ID.
     - **Success Response:**
       - **Status:** `200 OK`
       - **Body:**
         ```json
         {
           "id": "1",
-          "firstName": "John",
-          "lastName": "Doe",
-          "email": "example@mail.com"
+          "name": "Sample Item",
+          "description": "This is a sample item."
         }
         ```
     - **Error Response:**
@@ -101,20 +89,19 @@
       - **Body:**
         ```json
         {
-          "error": "User not found"
+          "error": "Item not found"
         }
         ```
 
-### Update User
-- **PUT** `/users/:id`
-    - **Description:** Update an existing user by their ID.
-    - **Request Body:** JSON object with updated user details.
+### Update Item
+- **PUT** `/items/:id`
+    - **Description:** Update an existing item by its ID.
+    - **Request Body:** JSON object with updated `name` and `description`.
     - **Example Request:**
       ```json
       {
-        "firstName": "Jane",
-        "lastName": "Smith",
-        "email": "jane.smith@mail.com"
+        "name": "Updated Item",
+        "description": "Updated description."
       }
       ```
     - **Success Response:**
@@ -123,9 +110,8 @@
         ```json
         {
           "id": "1",
-          "firstName": "Jane",
-          "lastName": "Smith",
-          "email": "jane.smith@mail.com"
+          "name": "Updated Item",
+          "description": "Updated description."
         }
         ```
     - **Error Responses:**
@@ -140,13 +126,13 @@
       - **Body:**
         ```json
         {
-          "error": "User not found"
+          "error": "Item not found"
         }
         ```
 
-### Delete User
-- **DELETE** `/users/:id`
-    - **Description:** Delete a user by their ID.
+### Delete Item
+- **DELETE** `/items/:id`
+    - **Description:** Delete an item by its ID.
     - **Success Response:**
       - **Status:** `204 No Content`
     - **Error Response:**
@@ -154,8 +140,14 @@
       - **Body:**
         ```json
         {
-          "error": "User not found"
+          "error": "Item not found"
         }
         ```
 
+## API Documentation
 
+You can explore and test the API using Swagger UI at:
+
+```
+http://localhost:5000/api-docs/
+```

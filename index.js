@@ -1,22 +1,24 @@
 import express from 'express';
 
-import bodyParser from 'body-parser';
-import usersRouter from './routes/users.js';
+import itemsRouter from './routes/items.js';
 
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
 const app = express();
-app.use(bodyParser.json());
+// parse JSON bodies
+app.use(express.json());
+// parse URL-encoded bodies (as sent by HTML forms)
+app.use(express.urlencoded({ extended: true }));
 
 // home page
 app.get('/', (req, res) => {
-    res.send('Welcome to the User Management API');
+    res.send('Hello, World!');
 });
 
 
-// use the users router
-app.use('/users', usersRouter);
+// use the items router
+app.use('/items', itemsRouter);
 
 
 
