@@ -2,6 +2,37 @@ import express from 'express';
 const router = express.Router();
 import { v4 as uuidv4 } from 'uuid';
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - firstName
+ *         - lastName
+ *         - email
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *         firstName:
+ *           type: string
+ *           description: The first name of the user
+ *         lastName:
+ *           type: string
+ *           description: The last name of the user
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: The email of the user
+ *       example:
+ *         id: d5fE_asz
+ *         firstName: John
+ *         lastName: Doe
+ *         email: example@email.com
+ */
+
 
 // constant user
 let USER = [];

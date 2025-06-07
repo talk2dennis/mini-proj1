@@ -13,6 +13,8 @@
   "description": "A simple CRUD Express.js application.",
   "dependencies": {
     "express": "^5.1.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
