@@ -26,12 +26,11 @@
 
 ## Endpoints
 
-### Create
+### Create User
 - **POST** `/users`
-    - Description: Create a new user.
-    - Request Body: JSON object with item details.
-    - These fields are compulsory.
-    - Example:
+    - **Description:** Create a new user.
+    - **Request Body:** JSON object with user details. All fields are required.
+    - **Example Request:**
       ```json
       {
         "firstName": "John",
@@ -39,25 +38,125 @@
         "email": "example@mail.com"
       }
       ```
+    - **Success Response:**
+      - **Status:** `201 Created`
+      - **Body:**
+        ```json
+        {
+          "id": "1",
+          "firstName": "John",
+          "lastName": "Doe",
+          "email": "example@mail.com"
+        }
+        ```
+    - **Error Responses:**
+      - **Status:** `400 Bad Request`
+      - **Body:**
+        ```json
+        {
+          "error": "Missing required fields"
+        }
+        ```
+      - **Status:** `409 Conflict`
+      - **Body:**
+        ```json
+        {
+          "error": "Email already exists"
+        }
+        ```
 
-### Read
+### Get All Users
 - **GET** `/users`
-    - Description: Retrieve a list of all users.
+    - **Description:** Retrieve a list of all users.
+    - **Success Response:**
+      - **Status:** `200 OK`
+      - **Body:**
+        ```json
+        [
+          {
+            "id": "1",
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "example@mail.com"
+          }
+        ]
+        ```
 
+### Get User by ID
 - **GET** `/users/:id`
-    - Description: Retrieve a single user by its ID.
+    - **Description:** Retrieve a single user by their ID.
+    - **Success Response:**
+      - **Status:** `200 OK`
+      - **Body:**
+        ```json
+        {
+          "id": "1",
+          "firstName": "John",
+          "lastName": "Doe",
+          "email": "example@mail.com"
+        }
+        ```
+    - **Error Response:**
+      - **Status:** `404 Not Found`
+      - **Body:**
+        ```json
+        {
+          "error": "User not found"
+        }
+        ```
 
-### Update
+### Update User
 - **PUT** `/users/:id`
-    - Description: Update an existing user by its ID.
-    - Request Body: JSON object with updated user details.
+    - **Description:** Update an existing user by their ID.
+    - **Request Body:** JSON object with updated user details.
+    - **Example Request:**
+      ```json
+      {
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "email": "jane.smith@mail.com"
+      }
+      ```
+    - **Success Response:**
+      - **Status:** `200 OK`
+      - **Body:**
+        ```json
+        {
+          "id": "1",
+          "firstName": "Jane",
+          "lastName": "Smith",
+          "email": "jane.smith@mail.com"
+        }
+        ```
+    - **Error Responses:**
+      - **Status:** `400 Bad Request`
+      - **Body:**
+        ```json
+        {
+          "error": "Missing required fields"
+        }
+        ```
+      - **Status:** `404 Not Found`
+      - **Body:**
+        ```json
+        {
+          "error": "User not found"
+        }
+        ```
 
-### Delete
+### Delete User
 - **DELETE** `/users/:id`
-    - Description: Delete a User by its ID.
-## Steps to Run the Application
-
-
+    - **Description:** Delete a user by their ID.
+    - **Success Response:**
+      - **Status:** `204 No Content`
+    - **Error Response:**
+      - **Status:** `404 Not Found`
+      - **Body:**
+        ```json
+        {
+          "error": "User not found"
+        }
+        ```
 
 > Use tools like Postman or curl to test these endpoints.
-JSON object with updated item details.
+
