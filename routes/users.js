@@ -1,5 +1,16 @@
 import express from 'express';
 import client from '../database/db.js';
+import { body, param, validationResult } from 'express-validator';
+
+// custom error handler for validation
+class ApiError extends Error {
+    constructor(message, statusCode = 500) {
+        super(message);
+        this.name = this.constructor.name;
+        this.statusCode = statusCode;
+        Error.captureStackTrace(this, this.constructor);
+    }
+}
 
 const table = `CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
@@ -8,7 +19,10 @@ const table = `CREATE TABLE IF NOT EXISTS users (
   age INTEGER
 );
 `
-client.query(table).catch((err) => console.error("Error creating table", err.stack));
+client.query(table).catch((err) => {
+    console.error("Error creating table", err.stack)
+    process.exit(1);
+});
 
 const router = express.Router();
 
@@ -62,13 +76,12 @@ const router = express.Router();
  */
 
 // get routes to get all users
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const result = await client.query('SELECT * FROM users');
         res.json(result.rows);
     } catch (err) {
-        console.error("Error fetching users", err.stack);
-        res.status(500).send("Internal Server Error");
+        next(new ApiError("Error fetching users", 500));
     }
 });
 
@@ -90,22 +103,34 @@ router.get('/', async (req, res) => {
  */
 
 // post route to create a new user
-router.post('/', async (req, res) => {
-    const { name, email, age } = req.body;
-    if (!name || !email || !age) {
-        return res.status(400).json({ error: 'Name, email, and age are required' });
-    }
-    try {
-        const result = await client.query(
-            'INSERT INTO users (name, email, age) VALUES ($1, $2, $3) RETURNING *',
-            [name, email, age]
-        );
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        console.error("Error creating user", err.stack);
-        res.status(500).send("Internal Server Error");
-    }
-});
+router.post('/',
+    [
+        body('name').notEmpty().withMessage('Name is required').isString().withMessage('Name must be a string').trim(),
+        body('email').notEmpty().withMessage("Email is required").isEmail().withMessage('Valid email is required'),
+        body('age').notEmpty().withMessage('Age is required').isInt({ gt: 0 }).withMessage('Age must be a positive integer')
+    ],
+    async (req, res, next) => {
+        // check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json(
+                {
+                    error: 'Validation Error',
+                    message: 'Invalid input data',
+                    errors: errors.array()
+                });
+        }
+        const { name, email, age } = req.body;
+        try {
+            const result = await client.query(
+                'INSERT INTO users (name, email, age) VALUES ($1, $2, $3) RETURNING id, name, email, age',
+                [name, email, age]
+            );
+            res.status(201).json(result.rows[0]);
+        } catch (err) {
+            next(new ApiError("Error creating user", 500));
+        }
+    });
 
 // get a user by ID
 /**
@@ -129,19 +154,30 @@ router.post('/', async (req, res) => {
  *               $ref: '#/components/schemas/User'
  */
 
-router.get('/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const result = await client.query('SELECT * FROM users WHERE id = $1', [id]);
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'User not found' });
+router.get('/:id',
+    [param('id').isInt().withMessage('ID must be an integer')],
+    async (req, res) => {
+        // check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                error: 'Validation Error',
+                message: 'Invalid ID format',
+                errors: errors.array()
+            });
         }
-        res.json(result.rows[0]);
-    } catch (err) {
-        console.error("Error fetching user", err.stack);
-        res.status(500).send("Internal Server Error");
-    }
-});
+        const { id } = req.params;
+        try {
+            const result = await client.query('SELECT * FROM users WHERE id = $1', [id]);
+            if (result.rows.length === 0) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            res.json(result.rows[0]);
+        } catch (err) {
+            next(new ApiError("Error fetching user", 500));
+        }
+    });
+
 
 // update a user by ID
 /**
@@ -167,26 +203,39 @@ router.get('/:id', async (req, res) => {
  *         description: User updated successfully
  */
 
-router.put('/:id', async (req, res) => {
-    const { id } = req.params;
-    const { name, email, age } = req.body;
-    if (!name || !email || !age) {
-        return res.status(400).json({ error: 'Name, email, and age are required' });
-    }
-    try {
-        const result = await client.query(
-            'UPDATE users SET name = $1, email = $2, age = $3 WHERE id = $4 RETURNING *',
-            [name, email, age, id]
-        );
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'User not found' });
+router.put('/:id',
+    [
+        param('id').isInt().withMessage('ID must be an integer'),
+        body('name').optional().isString().withMessage('Name must be a string').trim(),
+        body('email').optional().isEmail().withMessage('Valid email is required').trim(),
+        body('age').optional().isInt({ min: 0 }).withMessage('Age must be a positive integer')
+    ],
+    async (req, res, next) => {
+        // validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                error: 'Validation Error',
+                message: 'Invalid input data',
+                errors: errors.array()
+            });
         }
-        res.json(result.rows[0]);
-    } catch (err) {
-        console.error("Error updating user", err.stack);
-        res.status(500).send("Internal Server Error");
-    }
-});
+
+        const { id } = req.params;
+        const { name, email, age } = req.body;
+        try {
+            const result = await client.query(
+                'UPDATE users SET name = $1, email = $2, age = $3 WHERE id = $4 RETURNING id, name, email, age',
+                [name, email, age, id]
+            );
+            if (result.rows.length === 0) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            res.json(result.rows[0]);
+        } catch (err) {
+            next(new ApiError("Error updating user", 500));
+        }
+    });
 
 // delete a user by ID
 /**
@@ -206,18 +255,28 @@ router.put('/:id', async (req, res) => {
  *         description: User deleted successfully
  */
 
-router.delete('/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const result = await client.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'User not found' });
+router.delete('/:id',
+    [param('id').isInt().withMessage('ID must be an integer')],
+    async (req, res, next) => {
+        // validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                error: 'Validation Error',
+                message: 'Invalid ID format',
+                errors: errors.array()
+            });
         }
-        res.status(204).send();
-    } catch (err) {
-        console.error("Error deleting user", err.stack);
-        res.status(500).send("Internal Server Error");
-    }
-});
+        const { id } = req.params;
+        try {
+            const result = await client.query('DELETE FROM users WHERE id = $1 RETURNING id, name, age', [id]);
+            if (result.rows.length === 0) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            res.status(204).send();
+        } catch (err) {
+            next(new ApiError("Error deleting user", 500));
+        }
+    });
 
 export default router;

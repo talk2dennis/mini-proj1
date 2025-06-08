@@ -1,10 +1,14 @@
 import express from 'express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-
+import client from './database/db.js';
 import userRouter from './routes/users.js';
 
 const app = express();
+
+// port
+const PORT = parseInt(process.env.PORT, 10) || 5000;
+
 // parse JSON bodies
 app.use(express.json());
 // parse URL-encoded bodies (as sent by HTML forms)
@@ -12,13 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // home page
 app.get('/', (req, res) => {
-    res.send('Hello, World!');
+  res.send('Hello, World!');
 });
 
 // use the users router
 app.use('/users', userRouter);
-
-
 
 
 // swagger options
@@ -42,7 +44,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:5000",
+        url: `http://localhost:${PORT}`,
       },
     ],
   },
@@ -56,13 +58,22 @@ app.use(
   swaggerUi.setup(specs, { explorer: true })
 );
 
+
 // 404 error handling
-app.use((req, res) => {
-    res.status(404).send({ error: 'Not Found' });
+app.use((req, res, next) => {
+  res.status(404).send({ error: 'Not Found', message: `Route ${req.originalUrl} not found` });
 });
 
-// start the server
-const PORT = 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+// error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.statusCode || 500).json({
+    error: err.name || 'Internal Server Error',
+    message: err.message || 'An unexpected error occurred.'
+  });
 });
+
+  // start the server
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });

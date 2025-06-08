@@ -4,7 +4,7 @@
 
 1. Clone the repository:
   ```bash
-  git clone <git@github.com:talk2dennis/mini-proj1.git>
+  git clone git@github.com:talk2dennis/mini-proj1.git
   ```
 
 2. Change to the project directory:
@@ -32,7 +32,7 @@
   - **Example Request:**
     ```json
     {
-    "name": "Dohn Doe",
+    "name": "John Doe",
     "email": "johndoe@example.com",
     "age": 20
     }
@@ -43,7 +43,7 @@
     ```json
     {
       "id": "1",
-      "name": "Dohn Doe",
+      "name": "John Doe",
       "email": "johndoe@example.com",
       "age": 20
     }
@@ -67,7 +67,7 @@
     [
       {
       "id": "1",
-      "name": "johndDohn Doe",
+      "name": "John Doe",
       "email": "johndoe@example.com",
       "age": 20
       }
@@ -83,7 +83,7 @@
     ```json
     {
       "id": "1",
-      "name": "johndDohn Doe",
+      "name": "John Doe",
       "email": "johndoe@example.com",
       "age": 20
     }
