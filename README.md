@@ -3,146 +3,152 @@
 ## Steps to Run the Application
 
 1. Clone the repository:
-    ```bash
-    git clone <repo-url>
-    ```
+  ```bash
+  git clone <git@github.com:talk2dennis/mini-proj1.git>
+  ```
 
 2. Change to the project directory:
-    ```bash
-    cd mini-proj1
-    ```
+  ```bash
+  cd mini-proj1
+  ```
 
 3. Install all dependencies:
-    ```bash
-    npm install
-    ```
+  ```bash
+  npm install
+  ```
 
 4. Start the server:
-    ```bash
-    npm run dev
-    ```
+  ```bash
+  npm run dev
+  ```
 
 5. The server will start at `http://localhost:5000`. Use the endpoints below to interact with the API.
 
 ## Endpoints
-### Create Item
-- **POST** `/items`
-    - **Description:** Create a new item.
-    - **Request Body:** JSON object with `name` and `description`. Both fields are required.
-    - **Example Request:**
-      ```json
+### Create User
+- **POST** `/users`
+  - **Description:** Create a new user.
+  - **Request Body:** JSON object with `name`, `age` and `email`. Both fields are required.
+  - **Example Request:**
+    ```json
+    {
+    "name": "Dohn Doe",
+    "email": "johndoe@example.com",
+    "age": 20
+    }
+    ```
+  - **Success Response:**
+    - **Status:** `201 Created`
+    - **Body:**
+    ```json
+    {
+      "id": "1",
+      "name": "Dohn Doe",
+      "email": "johndoe@example.com",
+      "age": 20
+    }
+    ```
+  - **Error Response:**
+    - **Status:** `400 Bad Request`
+    - **Body:**
+    ```json
+    {
+      "error": "Missing required fields"
+    }
+    ```
+
+### Get All Users
+- **GET** `/users`
+  - **Description:** Retrieve a list of all users.
+  - **Success Response:**
+    - **Status:** `200 OK`
+    - **Body:**
+    ```json
+    [
       {
-        "name": "Sample Item",
-        "description": "This is a sample item."
+      "id": "1",
+      "name": "johndDohn Doe",
+      "email": "johndoe@example.com",
+      "age": 20
       }
-      ```
-    - **Success Response:**
-      - **Status:** `201 Created`
-      - **Body:**
-        ```json
-        {
-          "id": "1",
-          "name": "Sample Item",
-          "description": "This is a sample item."
-        }
-        ```
-    - **Error Response:**
-      - **Status:** `400 Bad Request`
-      - **Body:**
-        ```json
-        {
-          "error": "Missing required fields"
-        }
-        ```
+    ]
+    ```
 
-### Get All Items
-- **GET** `/items`
-    - **Description:** Retrieve a list of all items.
-    - **Success Response:**
-      - **Status:** `200 OK`
-      - **Body:**
-        ```json
-        [
-          {
-            "id": "1",
-            "name": "Sample Item",
-            "description": "This is a sample item."
-          }
-        ]
-        ```
+### Get User by ID
+- **GET** `/users/:id`
+  - **Description:** Retrieve a single user by their ID.
+  - **Success Response:**
+    - **Status:** `200 OK`
+    - **Body:**
+    ```json
+    {
+      "id": "1",
+      "name": "johndDohn Doe",
+      "email": "johndoe@example.com",
+      "age": 20
+    }
+    ```
+  - **Error Response:**
+    - **Status:** `404 Not Found`
+    - **Body:**
+    ```json
+    {
+      "error": "User not found"
+    }
+    ```
 
-### Get Item by ID
-- **GET** `/items/:id`
-    - **Description:** Retrieve a single item by its ID.
-    - **Success Response:**
-      - **Status:** `200 OK`
-      - **Body:**
-        ```json
-        {
-          "id": "1",
-          "name": "Sample Item",
-          "description": "This is a sample item."
-        }
-        ```
-    - **Error Response:**
-      - **Status:** `404 Not Found`
-      - **Body:**
-        ```json
-        {
-          "error": "Item not found"
-        }
-        ```
+### Update User
+- **PUT** `/users/:id`
+  - **Description:** Update an existing user by their ID.
+  - **Request Body:** JSON object with updated `name` and `email`.
+  - **Example Request:**
+    ```json
+    {
+    "name": "Jane Doe",
+    "email": "janedoe@example.com",
+    "age": 20
+    }
+    ```
+  - **Success Response:**
+    - **Status:** `200 OK`
+    - **Body:**
+    ```json
+    {
+      "id": "1",
+      "name": "Jane Doe",
+      "email": "janedoe@example.com",
+      "age": 20
+    }
+    ```
+  - **Error Responses:**
+    - **Status:** `400 Bad Request`
+    - **Body:**
+    ```json
+    {
+      "error": "Missing required fields"
+    }
+    ```
+    - **Status:** `404 Not Found`
+    - **Body:**
+    ```json
+    {
+      "error": "User not found"
+    }
+    ```
 
-### Update Item
-- **PUT** `/items/:id`
-    - **Description:** Update an existing item by its ID.
-    - **Request Body:** JSON object with updated `name` and `description`.
-    - **Example Request:**
-      ```json
-      {
-        "name": "Updated Item",
-        "description": "Updated description."
-      }
-      ```
-    - **Success Response:**
-      - **Status:** `200 OK`
-      - **Body:**
-        ```json
-        {
-          "id": "1",
-          "name": "Updated Item",
-          "description": "Updated description."
-        }
-        ```
-    - **Error Responses:**
-      - **Status:** `400 Bad Request`
-      - **Body:**
-        ```json
-        {
-          "error": "Missing required fields"
-        }
-        ```
-      - **Status:** `404 Not Found`
-      - **Body:**
-        ```json
-        {
-          "error": "Item not found"
-        }
-        ```
-
-### Delete Item
-- **DELETE** `/items/:id`
-    - **Description:** Delete an item by its ID.
-    - **Success Response:**
-      - **Status:** `204 No Content`
-    - **Error Response:**
-      - **Status:** `404 Not Found`
-      - **Body:**
-        ```json
-        {
-          "error": "Item not found"
-        }
-        ```
+### Delete User
+- **DELETE** `/users/:id`
+  - **Description:** Delete a user by their ID.
+  - **Success Response:**
+    - **Status:** `204 No Content`
+  - **Error Response:**
+    - **Status:** `404 Not Found`
+    - **Body:**
+    ```json
+    {
+      "error": "User not found"
+    }
+    ```
 
 ## API Documentation
 

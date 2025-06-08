@@ -1,9 +1,8 @@
 import express from 'express';
-
-import itemsRouter from './routes/items.js';
-
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+
+import userRouter from './routes/users.js';
 
 const app = express();
 // parse JSON bodies
@@ -16,9 +15,9 @@ app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
+// use the users router
+app.use('/users', userRouter);
 
-// use the items router
-app.use('/items', itemsRouter);
 
 
 

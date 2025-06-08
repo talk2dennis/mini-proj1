@@ -6,13 +6,21 @@
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  "keywords": [],
+  "keywords": [
+    "postgress",
+    "database",
+    "express",
+    "crud",
+    "api"
+  ],
   "author": "Dennis Adigwe <adigwedennis@gmail.com>",
   "license": "ISC",
   "type": "module",
   "description": "A simple CRUD Express.js application.",
   "dependencies": {
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "pg": "^8.16.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.1.0"
