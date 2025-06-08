@@ -28,7 +28,7 @@
 ### Create User
 - **POST** `/users`
   - **Description:** Create a new user.
-  - **Request Body:** JSON object with `name`, `age` and `email`. Both fields are required.
+  - **Request Body:** JSON object with `name`, `email`, and `age`. All fields are required.
   - **Example Request:**
     ```json
     {
@@ -53,7 +53,9 @@
     - **Body:**
     ```json
     {
-      "error": "Missing required fields"
+      "error": "Validation Error",
+      "message": "Invalid input data",
+      "errors": []
     }
     ```
 
@@ -100,7 +102,7 @@
 ### Update User
 - **PUT** `/users/:id`
   - **Description:** Update an existing user by their ID.
-  - **Request Body:** JSON object with updated `name` and `email`.
+  - **Request Body:** JSON object with updated `name`, `email` and `age`.
   - **Example Request:**
     ```json
     {
@@ -125,7 +127,9 @@
     - **Body:**
     ```json
     {
-      "error": "Missing required fields"
+      "error": "Validation Error",
+      "message": "Invalid input data",
+      "errors": []
     }
     ```
     - **Status:** `404 Not Found`
